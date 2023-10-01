@@ -71,4 +71,9 @@ class User extends Authenticatable
         self::$totalWithdrawal = Transaction::totalWithdrawal();
         return self::$user->update(['balance' => (self::$totalDeposit - (self::$totalWithdrawal + $fee))]);
     }
+	
+	public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

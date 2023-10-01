@@ -37,4 +37,8 @@ class Transaction extends Model
     {
         return Transaction::where(['transaction_type' => 'withdrawal', 'user_id' => auth()->id()])->whereMonth('created_at', date('m'))->sum('amount');
     }
+	public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
