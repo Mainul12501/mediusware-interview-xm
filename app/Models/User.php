@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Backend\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +19,8 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    protected static $user, $totalDeposit, $totalWithdrawal;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -27,6 +30,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'account_type',
+        'balance',
     ];
 
     /**
@@ -58,4 +63,12 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public static function updateUserAmount($request, $fee = 0)
+    {
+        self::$user = auth()->user();
+        self::$totalDeposit = Transaction::totalDeposit();
+        self::$totalWithdrawal = Transaction::totalWithdrawal();
+        return self::$user->update(['balance' => (self::$totalDeposit - (self::$totalWithdrawal + $fee))]);
+    }
 }
